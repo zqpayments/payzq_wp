@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * WC_Gateway_PayZQ class.
- *
  * @extends WC_Payment_Gateway
  */
 class WC_Gateway_PayZQ extends WC_Payment_Gateway {
@@ -16,22 +15,22 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->id                   = 'payzq';
 		$this->method_title         = __( 'PayZQ', 'woocommerce-gateway-payzq' );
-		$this->method_description   = __( 'PayZQ works by adding credit card fields on the checkout and then sending the details to Stripe for verification.', 'woocommerce-gateway-payzq' );
+		$this->method_description   = __( 'PayZQ works by adding credit card fields on the checkout and then sending the details for verification.', 'woocommerce-gateway-payzq' );
 		$this->has_fields           = true;
-		$this->view_transaction_url = 'https://dashboard.stripe.com/payments/%s';
+		$this->view_transaction_url = 'https://payzq.net';
 		$this->supports             = array(
-			'subscriptions',
+			// 'subscriptions',
 			'products',
 			'refunds',
-			'subscription_cancellation',
-			'subscription_reactivation',
-			'subscription_suspension',
-			'subscription_amount_changes',
-			'subscription_payment_method_change', // Subs 1.n compatibility
-			'subscription_payment_method_change_customer',
-			'subscription_payment_method_change_admin',
-			'subscription_date_changes',
-			'multiple_subscriptions',
+			// 'subscription_cancellation',
+			// 'subscription_reactivation',
+			// 'subscription_suspension',
+			// 'subscription_amount_changes',
+			// 'subscription_payment_method_change', // Subs 1.n compatibility
+			// 'subscription_payment_method_change_customer',
+			// 'subscription_payment_method_change_admin',
+			// 'subscription_date_changes',
+			// 'multiple_subscriptions',
 			'pre-orders',
 		);
 
@@ -52,7 +51,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 		$this->logging                = 'yes' === $this->get_option( 'logging' );
 
 		if ( $this->testmode ) {
-			$this->description .= ' ' . sprintf( __( 'aq TEST MODE ENABLED. In test mode, you can use the card number 4242424242424242 with any CVC and a valid expiration date or check the documentation "<a href="%s">Testing Stripe</a>" for more card numbers.', 'woocommerce-gateway-payzq' ), 'https://stripe.com/docs/testing' );
+			$this->description .= ' ' . sprintf( __( 'Test mode activated', 'woocommerce-gateway-payzq' ), '' );
 			$this->description  = trim( $this->description );
 		}
 
@@ -109,7 +108,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 
 		// Show message if enabled and FORCE SSL is disabled and WordpressHTTPS plugin is not detected
 		if ( ( function_exists( 'wc_site_is_https' ) && ! wc_site_is_https() ) && ! class_exists( 'WordPressHTTPS' )  ) {
-			echo '<div class="error"><p>' . sprintf( __( 'PayZQ is enabled, but the <a href="%1$s">force SSL option</a> is disabled; your checkout may not be secure! Please enable SSL and ensure your server has a valid <a href="%2$s" target="_blank">SSL certificate</a> - Stripe will only work in test mode.', 'woocommerce-gateway-payzq' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ), 'https://en.wikipedia.org/wiki/Transport_Layer_Security' ) . '</p></div>';
+			echo '<div class="error"><p>' . sprintf( __( 'PayZQ is enabled, but the <a href="%1$s">force SSL option</a> is disabled; your checkout may not be secure! Please enable SSL and ensure your server has a valid <a href="%2$s" target="_blank">SSL certificate</a> - PayZQ will only work in test mode.', 'woocommerce-gateway-payzq' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ), 'https://en.wikipedia.org/wiki/Transport_Layer_Security' ) . '</p></div>';
 		}
 	}
 
@@ -117,12 +116,11 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	 * Check if this gateway is enabled
 	 */
 	public function is_available() {
-		return true;
 		if ( 'yes' === $this->enabled ) {
 			if ( ! $this->testmode && is_checkout() && ! is_ssl() ) {
 				return false;
 			}
-			if ( ! $this->secret_key || ! $this->publishable_key ) {
+			if ( ! $this->secret_key || ! $this->merchant_key ) {
 				return false;
 			}
 			return true;
@@ -138,11 +136,11 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 
 		wc_enqueue_js( "
 			jQuery( function( $ ) {
-				$( '#woocommerce_payzq_stripe_checkout' ).change(function(){
+				$( '#woocommerce_payzq_checkout' ).change(function(){
 					if ( $( this ).is( ':checked' ) ) {
-						$( '#woocommerce_payzq_stripe_checkout_locale, #woocommerce_payzq_stripe_bitcoin, #woocommerce_payzq_stripe_checkout_image' ).closest( 'tr' ).show();
+						$( '#woocommerce_payzq_checkout_locale, #woocommerce_payzq_checkout_image' ).closest( 'tr' ).show();
 					} else {
-						$( '#woocommerce_payzq_stripe_checkout_locale, #woocommerce_payzq_stripe_bitcoin, #woocommerce_payzq_stripe_checkout_image' ).closest( 'tr' ).hide();
+						$( '#woocommerce_payzq_checkout_locale, #woocommerce_payzq_checkout_image' ).closest( 'tr' ).hide();
 					}
 				}).change();
 			});
@@ -190,27 +188,15 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	/**
 	 * payment_scripts function.
 	 *
-	 * Outputs scripts used for stripe payment
-	 *
 	 * @access public
 	 */
 	public function payment_scripts() {
 		WC_PayZQ::log( "Entradbi en payment_scripts " );
 
-		// if ( $this->stripe_checkout ) {
-		// 	wp_enqueue_script( 'stripe', 'https://checkout.stripe.com/v2/checkout.js', '', '2.0', true );
-		// 	wp_enqueue_script( 'woocommerce_payzq', plugins_url( 'assets/js/stripe-checkout.js', WC_PAYZQ_MAIN_FILE ), array( 'stripe' ), WC_PAYZQ_VERSION, true );
-		// } else {
-		// 	wp_enqueue_script( 'stripe', 'https://js.stripe.com/v2/', '', '1.0', true );
-		// 	wp_enqueue_script( 'woocommerce_payzq', plugins_url( 'assets/js/stripe.js', WC_PAYZQ_MAIN_FILE ), array( 'jquery-payment', 'stripe' ), WC_PAYZQ_VERSION, true );
-		// }
-
-		$stripe_params = array(
+		$payzq_params = array(
 			'i18n_terms'           => __( 'Please accept the terms and conditions first', 'woocommerce-gateway-payzq' ),
 			'i18n_required_fields' => __( 'Please fill in required checkout fields first', 'woocommerce-gateway-payzq' ),
 		);
-
-		WC_PayZQ::log( json_encode($_GET) );
 
 		if (is_checkout_pay_page()) {
 			WC_PayZQ::log( "is_checkout_pay_page" );
@@ -223,27 +209,23 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 			$order     = wc_get_order( $order_id );
 
 			if ( $order->id === $order_id && $order->order_key === $order_key ) {
-				$stripe_params['billing_first_name'] = $order->billing_first_name;
-				$stripe_params['billing_last_name']  = $order->billing_last_name;
-				$stripe_params['billing_address_1']  = $order->billing_address_1;
-				$stripe_params['billing_address_2']  = $order->billing_address_2;
-				$stripe_params['billing_state']      = $order->billing_state;
-				$stripe_params['billing_city']       = $order->billing_city;
-				$stripe_params['billing_postcode']   = $order->billing_postcode;
-				$stripe_params['billing_country']    = $order->billing_country;
+				$payzq_params['billing_first_name'] = $order->billing_first_name;
+				$payzq_params['billing_last_name']  = $order->billing_last_name;
+				$payzq_params['billing_address_1']  = $order->billing_address_1;
+				$payzq_params['billing_address_2']  = $order->billing_address_2;
+				$payzq_params['billing_state']      = $order->billing_state;
+				$payzq_params['billing_city']       = $order->billing_city;
+				$payzq_params['billing_postcode']   = $order->billing_postcode;
+				$payzq_params['billing_country']    = $order->billing_country;
 			}
-
-			WC_PayZQ::log( "Entradbi en payment_scripts 1112222212" );
 		}
 
-
-		wp_localize_script( 'woocommerce_payzq', 'wc_payzq_params', apply_filters( 'wc_payzq_params', $stripe_params ) );
+		wp_localize_script( 'woocommerce_payzq', 'wc_payzq_params', apply_filters( 'wc_payzq_params', $payzq_params ) );
 	}
 
 	/**
 	 * Generate the request for the payment.
 	 * @param  WC_Order $order
-	 * @param  object $source
 	 * @return array()
 	 */
 	protected function generate_payment_request( $order ) {
@@ -251,9 +233,6 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 		$card_number = WC_PayZQ_API::clear_card_number($_POST['payzq-card-number']);
 		$expiry = WC_PayZQ_API::clear_card_date($_POST['payzq-card-expiry']);
 		$cardholder_name = $_POST['billing_first_name'].' '.$_POST['billing_first_name'];
-
-		WC_PayZQ::log( "POST ".json_encode($_POST ));
-		WC_PayZQ::log( "get_card_type ".WC_PayZQ_API::get_card_type($card_number));
 
 		$credit_card = array(
       "cardholder" => $cardholder_name,
@@ -336,21 +315,16 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
       "3ds" => false,
       "ip" => $ip,
     );
-
 	}
 
 	protected function generate_refund_request( $order, $amount ) {
-
-		$nex_code_transaction = WC_PayZQ_API::get_payzq_transaction_code();
-		$ip = WC_PayZQ_API::get_ip_server();
-
 		return array(
       "type" => "refund",
-      "transaction_id" => $nex_code_transaction,
+      "transaction_id" => WC_PayZQ_API::get_payzq_transaction_code(),
       "target_transaction_id" => $order->get_transaction_id(),
       "amount" => floatval(number_format($amount, 2, '.', '')),
       "currency" => $order->get_currency(),
-      "ip" => $ip,
+      "ip" => WC_PayZQ_API::get_ip_server(),
     );
 	}
 
@@ -359,15 +333,12 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	 */
 	public function process_payment( $order_id, $retry = true, $force_customer = false ) {
 		try {
-			WC_PayZQ::log( "Entry process_payment. Order ID: ".$order_id );
+			WC_PayZQ::log( "Process payment. Order ID: ".$order_id );
 
 			$order  = wc_get_order( $order_id );
-
 			$p_response = null;
 
 			if ( $order->get_total() > 0 ) {
-
-
 				// Make the request to API
 				$response = WC_PayZQ_API::request( $this->generate_payment_request( $order ) );
 
@@ -382,7 +353,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 			}
 
 			if (is_null($p_response) || !isset($p_response['code']) || (isset($p_response['code']) && $p_response['code'] != '00')) {
-				throw new Exception( 'Ha ocurrido un error con el pago' );
+				throw new Exception( __( 'an error has ocurred whit the payment', 'woocommerce-gateway-payzq' ) );
 			}
 
 			// Remove cart
@@ -403,14 +374,14 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Store extra meta data for an order from a Stripe Response.
+	 * Store extra meta data for an order from a PayZQ Response.
 	 */
 	public function process_response( $response, $order ) {
 		WC_PayZQ::log( "Processing response: " . print_r( $response, true ) );
 
 		// Store charge data
-		update_post_meta( $order->id, '_payzq_transaction_id', $response->transaction_id );
-		update_post_meta( $order->id, '_payzq_transaction_captured', $response->message === 'Accepted' ? 'yes' : 'no' );
+		update_post_meta( $order->id, '_payzq_transaction_id', $response['transaction_id'] );
+		update_post_meta( $order->id, '_payzq_transaction_captured', $response['message'] === 'Accepted' ? 'yes' : 'no' );
 
 		if ( $response['code'] == '00' ) {
 			$order->payment_complete( $response['transaction_id'] );
@@ -427,16 +398,12 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
-		WC_PayZQ::log( "Entry process_refund. Order ID: $order_id for the amount of {$amount} and reason: $reason" );
+		WC_PayZQ::log( "Process refund. Order ID: $order_id for the amount of {$amount} and reason: $reason" );
 		$order = wc_get_order( $order_id );
-
-		WC_PayZQ::log( "Data ".json_encode($order->get_data()) );
 
 		if ( ! $order || ! $order->get_transaction_id() ) {
 			return false;
 		}
-
-		WC_PayZQ::log( "Info: Beginning refund for order $order_id for the amount of {$amount}" );
 
 		$response = WC_PayZQ_API::request( $this->generate_refund_request( $order, $amount ) );
 

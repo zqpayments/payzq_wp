@@ -4,7 +4,7 @@
  * Plugin URI: https://wordpress.org/plugins/woocommerce-gateway-payzq/
  * Description: PayZQ Take credit card payments on your store.
  * Author: PayZQ
- * Author URI: https://payzq.com/
+ * Author URI: https://payzq.net/
  * Version: 1.0.0
  * Requires at least: 4.4
  * Tested up to: 4.8
@@ -118,10 +118,10 @@ if ( ! class_exists( 'WC_PayZQ' ) ) :
 			$this->init_gateways();
 
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
-			add_action( 'woocommerce_order_status_on-hold_to_processing', array( $this, 'capture_payment' ) );
-			add_action( 'woocommerce_order_status_on-hold_to_completed', array( $this, 'capture_payment' ) );
-			add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'cancel_payment' ) );
-			add_action( 'woocommerce_order_status_on-hold_to_refunded', array( $this, 'cancel_payment' ) );
+			// add_action( 'woocommerce_order_status_on-hold_to_processing', array( $this, 'capture_payment' ) );
+			// add_action( 'woocommerce_order_status_on-hold_to_completed', array( $this, 'capture_payment' ) );
+			// add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'cancel_payment' ) );
+			// add_action( 'woocommerce_order_status_on-hold_to_refunded', array( $this, 'cancel_payment' ) );
 			// add_filter( 'woocommerce_get_customer_payment_tokens', array( $this, 'woocommerce_get_customer_payment_tokens' ), 10, 3 );
 			// add_action( 'woocommerce_payment_token_deleted', array( $this, 'woocommerce_payment_token_deleted' ), 10, 2 );
 			// add_action( 'woocommerce_payment_token_set_default', array( $this, 'woocommerce_payment_token_set_default' ) );
@@ -347,6 +347,6 @@ if ( ! class_exists( 'WC_PayZQ' ) ) :
 		}
 	}
 
-	$GLOBALS['wc_stripe'] = WC_PayZQ::get_instance();
+	$GLOBALS['wc_payzq'] = WC_PayZQ::get_instance();
 
 endif;

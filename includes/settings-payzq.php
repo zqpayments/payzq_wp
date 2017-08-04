@@ -55,13 +55,6 @@ return apply_filters( 'wc_payzq_settings',
 			'default'     => '',
 			'desc_tip'    => true,
 		),
-		'statement_descriptor' => array(
-			'title'       => __( 'Statement Descriptor', 'woocommerce-gateway-payzq' ),
-			'type'        => 'text',
-			'description' => __( 'Extra information about a charge. This will appear on your customer’s credit card statement.', 'woocommerce-gateway-payzq' ),
-			'default'     => '',
-			'desc_tip'    => true,
-		),
 		'logging' => array(
 			'title'       => __( 'Logging', 'woocommerce-gateway-payzq' ),
 			'label'       => __( 'Log debug messages', 'woocommerce-gateway-payzq' ),
