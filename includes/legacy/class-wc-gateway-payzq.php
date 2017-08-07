@@ -102,7 +102,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 			return;
 
 		} elseif ( ! $this->merchant_key ) {
-			echo '<div class="error"><p>' . sprintf( __( 'PayZQ error: Please enter your publishable key <a href="%s">here</a>', 'woocommerce-gateway-payzq' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payzq' . $addons ) ) . '</p></div>';
+			echo '<div class="error"><p>' . sprintf( __( 'PayZQ error: Please enter your merchant key <a href="%s">here</a>', 'woocommerce-gateway-payzq' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payzq' . $addons ) ) . '</p></div>';
 			return;
 		}
 
