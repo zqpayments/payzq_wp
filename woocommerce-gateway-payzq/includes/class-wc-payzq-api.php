@@ -128,6 +128,15 @@ class WC_PayZQ_API {
 		return self::$merchant_key;
 	}
 
+
+	/**
+	* Get secret merchant key.
+	* @return string
+	*/
+	public static function get_jwt_key() {
+		return self::$key_jwt;
+	}
+
 	/**
 	* cypher data.
 	* @param string $json_data

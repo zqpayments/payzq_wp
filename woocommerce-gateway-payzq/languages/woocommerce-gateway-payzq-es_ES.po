@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: woocommerce-gateway-payzq\n"
-"POT-Creation-Date: 2017-08-07 10:25+0200\n"
-"PO-Revision-Date: 2017-08-07 10:25+0200\n"
+"POT-Creation-Date: 2017-08-07 11:39+0200\n"
+"PO-Revision-Date: 2017-08-07 11:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -29,10 +29,11 @@ msgstr "PayZQ"
 
 #: includes/legacy/class-wc-gateway-payzq.php:18
 msgid ""
-"PayZQ works by adding credit card fields on the checkout and then sending "
-"the details for verification."
+"Enter your credentials, set the configuration parameters and start receiving "
+"transactions with PayZQ"
 msgstr ""
-"PayZQ genera la estructura necesaria para realizar y verificar los pagos"
+"Ingresa tus credenciales, configura los valores disponible y empiza a "
+"recibir transacciones con PayZQ"
 
 #: includes/legacy/class-wc-gateway-payzq.php:54
 msgid "Test mode activated"
@@ -217,3 +218,10 @@ msgstr "Documentos"
 #: woocommerce-gateway-payzq.php:251
 msgid "Support"
 msgstr "Soporte"
+
+#~ msgid ""
+#~ "PayZQ works by adding credit card fields on the checkout and then sending "
+#~ "the details for verification."
+#~ msgstr ""
+#~ "Introduce tus credenciales, establece los parámetros de configuración y "
+#~ "empieza a recibir transacciones con PayZQ"

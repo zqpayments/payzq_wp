@@ -102,7 +102,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 			return;
 
 		} elseif ( ! $this->merchant_key ) {
-			echo '<div class="error"><p>' . sprintf( __( 'PayZQ error: Please enter your merchant key <a href="%s">here</a>', 'woocommerce-gateway-payzq' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payzq' . $addons ) ) . '</p></div>';
+			echo '<div class="error"><p>' . sprintf( __( 'PayZQ error: Please enter your publishable key <a href="%s">here</a>', 'woocommerce-gateway-payzq' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payzq' . $addons ) ) . '</p></div>';
 			return;
 		}
 
@@ -242,17 +242,6 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
       "expiry" => $expiry,
     );
 
-    $avs = array(
-      "address" => $order->get_billing_address_1(). ' ' .$order	->get_billing_address_2(),
-      "country" => $order->get_billing_country(),
-      "state_province" => $order->get_billing_state(),
-      "email" => $order->get_billing_email(),
-      "cardholder_name" => $cardholder_name,
-      "postal_code" => $order->get_billing_postcode(),
-      "phone" => $order->get_billing_phone(),
-      "city" => $order->get_billing_city(),
-    );
-
     $billing = array(
       "name" => $order->get_billing_first_name(). ' ' .$order->get_billing_last_name(),
       "fiscal_code" => '',
@@ -284,37 +273,58 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
         "description" => $product->get_name(),
         "subtotal" => floatval($item->get_subtotal()),
         "taxes" => floatval($item->get_subtotal_tax()),
-        "total" => floatval($item->get_total() + $item->get_total_tax())
-
+        "total" => floatval($item->get_total() + $item->get_total_tax()),
+				"quantity" => $item->get_quantity()
       );
     }
 
     if ($order->get_shipping_total() > 0) {
       $breakdown[] = array(
         "description" => 'Shipping cost',
-        "subtotal" => floatval($order->get_shipping_total() - $order->get_shipping_tax()),
+        "subtotal" => floatval($order->get_shipping_total()),
         "taxes" => floatval($order->get_shipping_tax()),
-        "total" => floatval($order->get_shipping_total())
+        "total" => floatval($order->get_shipping_total() + $order->get_shipping_tax()),
+				"quantity" => 1
       );
     }
 
 		$nex_code_transaction = WC_PayZQ_API::get_payzq_transaction_code();
 		$ip = WC_PayZQ_API::get_ip_server();
 
-    return array(
+		$token = WC_PayZQ_API::get_secret_key();
+		$token_payload = JWT::decode($token, WC_PayZQ_API::get_jwt_key(), false);
+    $send_avs = (in_array('avs', $token_payload['security'])) ? true : false;
+
+    $response = array(
       "type" => "authorize_and_capture",
       "transaction_id" => $nex_code_transaction,
       "target_transaction_id" => '',
       "amount" => floatval(number_format($order->get_total(), 2, '.', '')),
       "currency" => $order->get_currency(),
       "credit_card" => $credit_card,
-      "avs" => $avs,
       "billing" => $billing,
       "shipping" => $shipping,
       "breakdown" => $breakdown,
       "3ds" => false,
       "ip" => $ip,
     );
+
+		if ($send_avs) {
+			$avs = array(
+	      "address" => $order->get_billing_address_1(). ' ' .$order	->get_billing_address_2(),
+	      "country" => $order->get_billing_country(),
+	      "state_province" => $order->get_billing_state(),
+	      "email" => $order->get_billing_email(),
+	      "cardholder_name" => $cardholder_name,
+	      "postal_code" => $order->get_billing_postcode(),
+	      "phone" => $order->get_billing_phone(),
+	      "city" => $order->get_billing_city(),
+	    );
+
+			$response['avs'] = $avs;
+		}
+
+		return $response;
 	}
 
 	protected function generate_refund_request( $order, $amount ) {
@@ -353,7 +363,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 			}
 
 			if (is_null($p_response) || !isset($p_response['code']) || (isset($p_response['code']) && $p_response['code'] != '00')) {
-				throw new Exception( __( 'an error has ocurred whit the payment', 'woocommerce-gateway-payzq' ) );
+				throw new Exception( __( 'an error has ocurred whit the ', 'woocommerce-gateway-payzq' ) );
 			}
 
 			// Remove cart
