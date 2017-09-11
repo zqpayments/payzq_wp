@@ -1,0 +1,200 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: woocommerce-gateway-payzq\n"
+"POT-Creation-Date: 2017-08-07 09:55+0200\n"
+"PO-Revision-Date: 2017-08-07 09:55+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-wc-payzq-api.php:215
+msgid "Transaction declined"
+msgstr ""
+
+#: includes/class-wc-payzq-api.php:219
+msgid "an error has ocurred calling curl"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:17
+msgid "PayZQ"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:18
+msgid ""
+"PayZQ works by adding credit card fields on the checkout and then sending "
+"the details for verification."
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:54
+msgid "Test mode activated"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:101
+#, php-format
+msgid "PayZQ error: Please enter your secret key <a href=\"%s\">here</a>"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:105
+#, php-format
+msgid "PayZQ error: Please enter your merchant key <a href=\"%s\">here</a>"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:111
+#, php-format
+msgid ""
+"PayZQ is enabled, but the <a href=\"%1$s\">force SSL option</a> is disabled; "
+"your checkout may not be secure! Please enable SSL and ensure your server "
+"has a valid <a href=\"%2$s\" target=\"_blank\">SSL certificate</a> - PayZQ "
+"will only work in test mode."
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:197
+msgid "Please accept the terms and conditions first"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:198
+msgid "Please fill in required checkout fields first"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:356
+msgid "an error has ocurred whit the payment"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:371
+#, php-format
+msgid "1Error: %s"
+msgstr ""
+
+#: includes/legacy/class-wc-gateway-payzq.php:414
+#, php-format
+msgid "Refunded %s - Refund ID: %s - Reason: %s"
+msgstr ""
+
+#: includes/settings-payzq.php:9
+msgid "Enable/Disable"
+msgstr ""
+
+#: includes/settings-payzq.php:10
+msgid "Enable PayZQ"
+msgstr ""
+
+#: includes/settings-payzq.php:16
+msgid "Title"
+msgstr ""
+
+#: includes/settings-payzq.php:18
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: includes/settings-payzq.php:19
+msgid "Card (PayZQ)"
+msgstr ""
+
+#: includes/settings-payzq.php:23
+msgid "Description"
+msgstr ""
+
+#: includes/settings-payzq.php:25
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: includes/settings-payzq.php:26
+msgid "Pay with your card via PayZQ."
+msgstr ""
+
+#: includes/settings-payzq.php:30
+msgid "Test mode"
+msgstr ""
+
+#: includes/settings-payzq.php:31
+msgid "Enable Test Mode"
+msgstr ""
+
+#: includes/settings-payzq.php:33
+msgid "Place the payment gateway in test mode using test API keys."
+msgstr ""
+
+#: includes/settings-payzq.php:38
+msgid "PayZQ Test Secret Key"
+msgstr ""
+
+#: includes/settings-payzq.php:40
+msgid "Get your API keys from your PayZQ account."
+msgstr ""
+
+#: includes/settings-payzq.php:45
+msgid "PayZQ Secret Key"
+msgstr ""
+
+#: includes/settings-payzq.php:47
+msgid "Get your API key from your PayZQ account."
+msgstr ""
+
+#: includes/settings-payzq.php:52
+msgid "Merchant Key"
+msgstr ""
+
+#: includes/settings-payzq.php:54
+msgid "Get your Merchant key from your PayZQ account."
+msgstr ""
+
+#: includes/settings-payzq.php:59
+msgid "Logging"
+msgstr ""
+
+#: includes/settings-payzq.php:60
+msgid "Log debug messages"
+msgstr ""
+
+#: includes/settings-payzq.php:62
+msgid "Save debug messages to the WooCommerce System Status log."
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:170
+#, php-format
+msgid ""
+"PayZQ is almost ready. To get started, <a href=\"%s\">set your PayZQ account "
+"keys</a>."
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:218
+#, php-format
+msgid ""
+"WooCommerce PayZQ - The minimum PHP version required for this plugin is "
+"%1$s. You are running %2$s."
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:224
+msgid "WooCommerce PayZQ requires WooCommerce to be activated to work."
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:228
+#, php-format
+msgid ""
+"WooCommerce PayZQ - The minimum WooCommerce version required for this plugin "
+"is %1$s. You are running %2$s."
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:234
+msgid "WooCommerce PayZQ - cURL is not installed."
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:249
+msgid "Settings"
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:250
+msgid "Docs"
+msgstr ""
+
+#: woocommerce-gateway-payzq.php:251
+msgid "Support"
+msgstr ""

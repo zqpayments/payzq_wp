@@ -1,0 +1,6 @@
+*** Changelog ***
+
+= For newer changelog entries, see readme.txt =
+
+= 1.0-0 - 2017.12.12 =
+* First Release
