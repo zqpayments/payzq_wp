@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_PayZQ_API {
 
 	private static $api_base_url = 'http://test-zms.zertifica.org:7743/api/v1/transactions/';
-  private static $key_jwt = 'secret';
   private static $iv = '4242424242424242';
 
 	/**
@@ -128,15 +127,6 @@ class WC_PayZQ_API {
 		return self::$merchant_key;
 	}
 
-
-	/**
-	* Get secret merchant key.
-	* @return string
-	*/
-	public static function get_jwt_key() {
-		return self::$key_jwt;
-	}
-
 	/**
 	* cypher data.
 	* @param string $json_data
@@ -181,6 +171,54 @@ class WC_PayZQ_API {
     );
 	}
 
+	private static function handleJsonError($errno)
+    {
+        $messages = array(
+            JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
+            JSON_ERROR_CTRL_CHAR => 'Unexpected control character found',
+            JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON'
+        );
+        throw new DomainException(isset($messages[$errno])
+            ? $messages[$errno]
+            : 'Unknown JSON error: ' . $errno
+        );
+    }
+
+    public static function jsonDecode($input)
+    {
+        $obj = json_decode($input, true);
+        if (function_exists('json_last_error') && $errno = json_last_error()) {
+            self::handleJsonError($errno);
+        }
+        else if ($obj === null && $input !== 'null') {
+            throw new DomainException('Null result with non-null input');
+        }
+        return $obj;
+    }
+
+    public static function urlsafeB64Decode($input)
+    {
+        $remainder = strlen($input) % 4;
+        if ($remainder) {
+            $padlen = 4 - $remainder;
+            $input .= str_repeat('=', $padlen);
+        }
+        return base64_decode(strtr($input, '-_', '+/'));
+    }
+
+    public static function getPayload($jwt) {
+      $tks = explode('.', $jwt);
+      if (count($tks) != 3) {
+        throw new UnexpectedValueException('Wrong number of segments');
+      }
+      list($headb64, $payloadb64, $cryptob64) = $tks;
+
+      if (null === $payload = self::jsonDecode(self::urlsafeB64Decode($payloadb64))) {
+          throw new UnexpectedValueException('Invalid segment encoding');
+      }
+      return $payload;
+    }
+
 	/**
 	 * Send the request to PayZQ's API
 	 *
@@ -193,7 +231,7 @@ class WC_PayZQ_API {
 		$token = self::get_secret_key();
 		$merchant_key = self::get_merchant_key();
 
-		$token_payload = JWT::decode($token, self::$key_jwt, false);
+		$token_payload = self::getPayload($token);
     $cypher = (in_array('cypher', $token_payload['security'])) ? true : false;
 
 		$json = json_encode($request, JSON_PRESERVE_ZERO_FRACTION);
@@ -214,8 +252,6 @@ class WC_PayZQ_API {
 			return new WP_Error( 'payzq_error', 'error '.$e->getMessage() );
 		}
 
-		self::log( "Success curl request");
-
 		if ($curl_status == 200 && $message = json_decode($curl_body, true)) {
 	    if ($message['code'] === '00') {
 				return $message;
@@ -224,8 +260,8 @@ class WC_PayZQ_API {
 				return new WP_Error( 'payzq_error', __( 'Transaction declined', 'woocommerce-gateway-payzq' ) );
 			}
 		} else {
-			self::log( "Error: an error has ocurred calling curl". $curl_body );
-			return new WP_Error( 'payzq_error', __( 'an error has ocurred calling curl', 'woocommerce-gateway-payzq' ) );
+			self::log( "Error: an error has ocurred calling curl". json_encode($curl_body) );
+			return new WP_Error( 'payzq_error', __( 'an error has ocurred calling curl', 'woocommerce-gateway-payzq' ) . json_encode($curl_body));
 		}
 		$parsed_response = json_decode( $response['body'] );
 	}

@@ -111,7 +111,6 @@ if ( ! class_exists( 'WC_PayZQ' ) ) :
 			}
 
 			include_once( dirname( __FILE__ ) . '/includes/class-wc-payzq-api.php' );
-			include_once( dirname( __FILE__ ) . '/includes/class-wc-payzq-jwt.php' );
 			include_once( dirname( __FILE__ ) . '/includes/class-wc-payzq-curl.php' );
 
 			// Init the gateway itself

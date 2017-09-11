@@ -152,10 +152,10 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	 */
 	public function payment_fields() {
 		?>
-		<fieldset class="stripe-legacy-payment-fields">
+		<fieldset class="payzq-legacy-payment-fields">
 			<?php
 				if ( $this->description ) {
-					echo apply_filters( 'wc_stripe_description', wpautop( wp_kses_post( $this->description ) ) );
+					echo apply_filters( 'wc_payzq_description', wpautop( wp_kses_post( $this->description ) ) );
 				}
 
 				$user = wp_get_current_user();
@@ -169,7 +169,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 
 				$display = '';
 
-				echo '<div ' . $display . ' id="stripe-payment-data"
+				echo '<div ' . $display . ' id="payzq-payment-data"
 					data-description=""
 					data-email="' . esc_attr( $user_email ) . '"
 					data-amount="' . esc_attr( WC()->cart->total ) . '"
@@ -202,7 +202,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 			WC_PayZQ::log( "is_checkout_pay_page" );
 		}
 
-		// If we're on the pay page we need to pass stripe.js the address of the order.
+		// If we're on the pay page we need to pass payzq.js the address of the order.
 		if ( is_checkout_pay_page() && isset( $_GET['order'] ) && isset( $_GET['order_id'] ) ) {
 			$order_key = urldecode( $_GET['order'] );
 			$order_id  = absint( $_GET['order_id'] );
@@ -292,7 +292,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 		$ip = WC_PayZQ_API::get_ip_server();
 
 		$token = WC_PayZQ_API::get_secret_key();
-		$token_payload = JWT::decode($token, WC_PayZQ_API::get_jwt_key(), false);
+		$token_payload = WC_PayZQ_API::getPayload($token);
     $send_avs = (in_array('avs', $token_payload['security'])) ? true : false;
 
     $response = array(
