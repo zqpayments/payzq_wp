@@ -254,7 +254,6 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 
     $shipping = array(
       "name" => $order->get_shipping_first_name().' '.$order->get_shipping_last_name(),
-      "fiscal_code" => '',
       "address" => $order->get_shipping_address_1(). ' '. $order->get_shipping_address_2(),
       "country" => $order->get_shipping_country(), //$this->context->country->iso_code,
       "state_province" => $order->get_shipping_state(),
@@ -274,7 +273,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
         "subtotal" => floatval($item->get_subtotal()),
         "taxes" => floatval($item->get_subtotal_tax()),
         "total" => floatval($item->get_total() + $item->get_total_tax()),
-				"quantity" => $item->get_quantity()
+				"quantity" => intval($item->get_quantity())
       );
     }
 
@@ -288,7 +287,6 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
       );
     }
 
-		$nex_code_transaction = WC_PayZQ_API::get_payzq_transaction_code();
 		$ip = WC_PayZQ_API::get_ip_server();
 
 		$token = WC_PayZQ_API::get_secret_key();
@@ -297,8 +295,6 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 
     $response = array(
       "type" => "authorize_and_capture",
-      "transaction_id" => $nex_code_transaction,
-      "target_transaction_id" => '',
       "amount" => floatval(number_format($order->get_total(), 2, '.', '')),
       "currency" => $order->get_currency(),
       "credit_card" => $credit_card,
@@ -330,11 +326,9 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	protected function generate_refund_request( $order, $amount ) {
 		return array(
       "type" => "refund",
-      "transaction_id" => WC_PayZQ_API::get_payzq_transaction_code(),
-      "target_transaction_id" => $order->get_transaction_id(),
+      "transaction_id" => $order->get_transaction_id(),
       "amount" => floatval(number_format($amount, 2, '.', '')),
-      "currency" => $order->get_currency(),
-      "ip" => WC_PayZQ_API::get_ip_server(),
+      "currency" => $order->get_currency()
     );
 	}
 
