@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class WC_PayZQ_API {
 
-	private static $api_base_url = 'http://test-zms.zertifica.org:7743/api/v1/transactions/';
+	private static $api_base_url = 'https://payzq.net/api/v1/transactions/';
   private static $iv = '4242424242424242';
 
 	/**
