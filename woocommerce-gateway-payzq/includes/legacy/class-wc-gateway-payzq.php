@@ -295,6 +295,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 
     $response = array(
       "type" => "authorize_and_capture",
+			"source" => "woocommerce",
       "amount" => floatval(number_format($order->get_total(), 2, '.', '')),
       "currency" => $order->get_currency(),
       "credit_card" => $credit_card,
@@ -326,6 +327,7 @@ class WC_Gateway_PayZQ extends WC_Payment_Gateway {
 	protected function generate_refund_request( $order, $amount ) {
 		return array(
       "type" => "refund",
+			"source" => "woocommerce",
       "transaction_id" => $order->get_transaction_id(),
       "amount" => floatval(number_format($amount, 2, '.', '')),
       "currency" => $order->get_currency()
